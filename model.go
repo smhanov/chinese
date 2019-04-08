@@ -21,7 +21,8 @@ import (
 // WordModel is a structure that can both find all words that are prefixes of a given string,
 // and return the log frequencies of those words.
 type WordModel struct {
-	dawg        dawg.Dawg
+	builder     dawg.Builder
+	finder      dawg.Finder
 	frequencies []float32
 }
 
@@ -29,7 +30,7 @@ type WordModel struct {
 // and then call Finish() before using it.
 func NewWordModel() *WordModel {
 	return &WordModel{
-		dawg: dawg.NewDAWG(),
+		builder: dawg.New(),
 	}
 }
 
@@ -41,14 +42,14 @@ func NewWordModel() *WordModel {
 // Words must be added in alphabetical order, and must not be repeated.
 // Otherwise, it will cause a panic()
 func (m *WordModel) AddWord(word string, freqCount float32) {
-	m.dawg.Add(word)
+	m.builder.Add(word)
 	m.frequencies = append(m.frequencies, freqCount)
 }
 
 // Finish signals that the word model is finished and ready to be used.
 func (m *WordModel) Finish() {
-	m.dawg.Finish()
-	log.Printf("Model has %v words, %v edges", m.dawg.NumAdded(), m.dawg.NumEdges())
+	m.finder = m.builder.Finish()
+	log.Printf("Model has %v words, %v edges", m.finder.NumAdded(), m.finder.NumEdges())
 
 	// sum frequencies, then convert to log (1/p)
 	var sum float64
@@ -67,7 +68,7 @@ func (m *WordModel) Finish() {
 // FindAllPrefixesOf finds all prefixes of the input string that are
 // words, and returns their log inverse probabilities.
 func (m *WordModel) FindAllPrefixesOf(input string) []WordFreq {
-	matches := m.dawg.FindAllPrefixesOf(input)
+	matches := m.finder.FindAllPrefixesOf(input)
 	results := make([]WordFreq, len(matches), len(matches))
 	for i, match := range matches {
 		results[i].Word = match.Word

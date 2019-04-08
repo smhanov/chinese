@@ -78,17 +78,19 @@ func TestSegmentEnglish(t *testing.T) {
 }*/
 
 func printMemUsage() {
+	runtime.GC()
+
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
 	// For info on each, see: https://golang.org/pkg/runtime/#MemStats
-	fmt.Printf("\nAlloc = %v MiB", bToMb(m.Alloc))
-	fmt.Printf("\tTotalAlloc = %v MiB", bToMb(m.TotalAlloc))
-	fmt.Printf("\tSys = %v MiB", bToMb(m.Sys))
+	fmt.Printf("\nAlloc = %v KiB", bToKb(m.Alloc))
+	fmt.Printf("\tTotalAlloc = %v KiB", bToKb(m.TotalAlloc))
+	fmt.Printf("\tSys = %v KiB", bToKb(m.Sys))
 	fmt.Printf("\tNumGC = %v\n", m.NumGC)
 }
 
-func bToMb(b uint64) uint64 {
-	return b / 1024 / 1024
+func bToKb(b uint64) uint64 {
+	return b / 1024
 }
 
 // In this example, we load the default model (from the web) and use it to segment some text.
