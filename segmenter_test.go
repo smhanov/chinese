@@ -13,7 +13,7 @@ import (
 )
 
 // ExampleSegmentation will create a simple model with some chinese words. Then it will split a sentence.
-func ExampleCustomModel() {
+func ExampleNewWordModel() {
 	model := chinese.NewWordModel()
 	model.AddWord("他", 1)
 	model.AddWord("儿", 1)
@@ -92,7 +92,7 @@ func bToMb(b uint64) uint64 {
 }
 
 // In this example, we load the default model (from the web) and use it to segment some text.
-func ExampleUse() {
+func ExampleNewSegmenter() {
 	segments := chinese.NewSegmenter().Segment("我儿子四岁。他的名字叫Zack。")
 	fmt.Printf("%s\n", strings.Join(segments, " "))
 	// Output:
