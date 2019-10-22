@@ -113,6 +113,8 @@ func readerFromAnything(arg interface{}) (io.Reader, error) {
 			f.Close()
 			return nil, err
 		}
+
+		return r, nil
 	}
 
 	return nil, errors.New("Don't know how to open that thing")
